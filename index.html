@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VonSim — Assembly Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    VON<span>NEUMANN MACHINE SIMULATOR by Miguel Ruiz
+    </span>
+  </div>
+  <div class="header-status">
+</header>
+
+<div class="main-grid">
+
+  <!-- LEFT: Editor -->
+  <div class="panel" id="editor-panel">
+    <div class="panel-header">
+      PROGRAM EDITOR
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="tag" id="line-count-tag">0 LINES</span>
+        <input type="file" id="file-input" accept=".txt,.asm">
+        <button class="btn" onclick="document.getElementById('file-input').click()">📂 LOAD FILE</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="btn primary" id="btn-assemble" onclick="assemble()">⚙ ASSEMBLE</button>
+      <button class="btn accent" id="btn-step" onclick="step()" disabled>▶ STEP</button>
+      <button class="btn accent" id="btn-run" onclick="runAll()" disabled>⏩ RUN</button>
+      <button class="btn danger" id="btn-reset" onclick="resetSim()">↺ RESET</button>
+    </div>
+    <div class="editor-wrap">
+      <div class="line-numbers" id="line-numbers"></div>
+      <textarea id="code-editor" spellcheck="false" placeholder="// Write your assembly program here...
+// Example:
+READ 10
+READ 11
+LOAD 10
+ADD 11
+STOR 12
+WRIT 12
+HALT 0
+50 0
+51 0"></textarea>
+    </div>
+  </div>
+
+  <!-- MIDDLE TOP: Registers -->
+  <div class="panel" id="registers-panel">
+    <div class="panel-header">REGISTERS<span class="tag">CPU STATE</span></div>
+    <div class="registers-grid">
+      <div class="register-cell">
+        <div class="reg-label">Program Counter (PC)</div>
+        <div class="reg-value" id="reg-pc">0</div>
+        <div class="reg-sub">Next instruction address</div>
+      </div>
+      <div class="register-cell">
+        <div class="reg-label">Instruction Register (IR)</div>
+        <div class="reg-value" id="reg-ir">—</div>
+        <div class="reg-sub">Current instruction</div>
+      </div>
+      <div class="register-cell">
+        <div class="reg-label">Operand Register (OR)</div>
+        <div class="reg-value" id="reg-or">—</div>
+        <div class="reg-sub">Operand value</div>
+      </div>
+      <div class="register-cell acc-cell">
+        <div class="reg-label">Accumulator (ACC)</div>
+        <div class="reg-value acc-big" id="reg-acc">0</div>
+        <div class="reg-sub" id="acc-flag">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE BOTTOM: Output -->
+  <div class="panel" id="output-panel">
+    <div class="panel-header">I/O CONSOLE<span class="tag" id="io-tag">READY</span></div>
+    <div id="output-log"></div>
+    <div class="input-row">
+      <span class="input-arrow">▶</span>
+      <input type="number" id="input-field" placeholder="Enter integer value..." disabled autocomplete="off">
+      <button class="btn" id="input-submit" onclick="submitInput()" style="display:none">ENTER</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: Memory -->
+  <div class="panel" id="memory-panel">
+    <div class="panel-header">MEMORY DUMP<span class="tag">100 WORDS</span></div>
+    <div class="memory-search">
+      <input type="number" id="mem-search" placeholder="Jump to addr 0–99" min="0" max="99" oninput="scrollToAddr(this.value)">
+    </div>
+    <div id="memory-grid"></div>
+  </div>
+
+</div>
+
+<!-- Error Modal -->
+<div class="modal-overlay" id="error-modal">
+  <div class="modal">
+    <h3>⚠ RUNTIME ERROR</h3>
+    <p id="error-msg"></p>
+    <div class="btn-row">
+      <button class="btn danger" onclick="closeErrorModal()">HALT PROGRAM</button>
+    </div>
+  </div>
+</div>
+
+<script src="simulator.js"></script>
+</body>
+</html>
